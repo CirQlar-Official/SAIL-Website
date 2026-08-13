@@ -1226,7 +1226,7 @@ SAIL.notes = (function () {
 })();
 
 /* SAIL — PDF slide source.
-   Slides are hot-swappable: drop a new /slides/.1/day{N}.pdf and every
+   Slides are hot-swappable: drop a new /slides/1/day{N}.pdf and every
    page becomes that day's slide deck, one page per slide, in order.
    Uses pdf.js (loaded via CDN in <head>). Pages are cached per day so
    navigating back and forth doesn't re-render from scratch. */
@@ -1254,7 +1254,7 @@ SAIL.pdfSlides = (function () {
     ensureWorker();
     if (typeof window.pdfjsLib === "undefined") return Promise.reject(new Error("pdf.js not available"));
     if (!docCache[day]) {
-      docCache[day] = pdfjsLib.getDocument(`./slides/.1/day${day}.pdf`).promise;
+      docCache[day] = pdfjsLib.getDocument(`./slides/1/day${day}.pdf`).promise;
     }
     return docCache[day];
   }
@@ -1423,13 +1423,13 @@ SAIL.viewer = (function () {
         .catch((err) => {
           console.error("Slide render failed", err);
           frame.append(el("div.slide__error", {
-            text: `Couldn't load slide ${n} from ./slides/.1/day${ctx.day}.pdf`,
+            text: `Couldn't load slide ${n} from ./slides/1/day${ctx.day}.pdf`,
           }));
         });
     } else {
       // Use iframe showing page=n of the PDF. Browser will display page if it
       // supports embedded PDF viewers; otherwise the user can download the PDF.
-      const src = `./slides/.1/day${ctx.day}.pdf#page=${n}`;
+      const src = `./slides/1/day${ctx.day}.pdf#page=${n}`;
       const iframe = el("iframe.slide__canvas", {
         src,
         title: `Slide ${n}`,
@@ -1615,7 +1615,7 @@ SAIL.viewer = (function () {
     await Promise.all(idx.map(async (meta) => {
       const day = meta.day || (meta && meta.day) || (idx.indexOf(meta) + 1);
       try {
-        const doc = await pdfjsLib.getDocument(`./slides/.1/day${day}.pdf`).promise;
+        const doc = await pdfjsLib.getDocument(`./slides/1/day${day}.pdf`).promise;
         const numPages = doc.numPages || 0;
         const existing = SAIL_DATA.days && SAIL_DATA.days[day] ? SAIL_DATA.days[day] : {};
         const existingSlides = Array.isArray(existing.slides) ? existing.slides : [];
@@ -1633,7 +1633,7 @@ SAIL.viewer = (function () {
         SAIL_DATA.days[day] = merged;
       } catch (err) {
         // If loading fails (missing PDF or pdf.js error), leave any existing data intact
-        console.warn("SAIL: couldn't load ./slides/.1/day" + day + ".pdf — leaving existing data.", err);
+        console.warn("SAIL: couldn't load ./slides/1/day" + day + ".pdf — leaving existing data.", err);
       }
     }));
   }
